@@ -14,6 +14,7 @@
   <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
+    const gameHeight = canvas.height - 70;
     let game;
     let playing = true;
     let sizeX = 35;
@@ -43,7 +44,7 @@
     }
 
     function drawBackground() {
-      ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(background, 0, 0, canvas.width, canvas.height + 150);
     }
 
     function updatePipes() {
@@ -52,16 +53,29 @@
       });
     }
 
+    // function createPipes() {
+    //   if (everyFrames(30)) {
+    //     let maxHeight = canvas.height - 250;
+    //     let minHeight = canvas.height / 6;
+    //     height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+    //     let maxGap = 200;
+    //     let minGap = 150;
+    //     gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
+    //     pipes.push({x: canvas.width, y: 0, height: height, up: true});
+    //     pipes.push({x: canvas.width, y: height + gap, height: canvas.height - height - gap, up: false});
+    //   }
+    // }
+
     function createPipes() {
       if (everyFrames(30)) {
-        let maxHeight = canvas.height - 250;
-        let minHeight = canvas.height / 6;
+        let maxHeight = gameHeight - 250;
+        let minHeight = gameHeight / 6;
         height = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
         let maxGap = 200;
         let minGap = 150;
         gap = Math.floor(Math.random() * (maxGap - minGap + 1) + minGap);
         pipes.push({x: canvas.width, y: 0, height: height, up: true});
-        pipes.push({x: canvas.width, y: height + gap, height: canvas.height - height - gap, up: false});
+        pipes.push({x: canvas.width, y: height + gap, height: gameHeight - height - gap, up: false});
       }
     }
 
@@ -81,8 +95,12 @@
       });
     }
 
+    // function checkHitBorders() {
+    //   return bird.y < 0 || bird.y + sizeY > canvas.height;
+    // }
+
     function checkHitBorders() {
-      return bird.y < 0 || bird.y + sizeY > canvas.height;
+      return bird.y < 0 || bird.y + sizeY > gameHeight;
     }
 
     function checkHit(pipe) {
@@ -173,8 +191,10 @@
     function handlePossibleRestart(e) {
       const kKey = 82;
       if(e.keyCode == kKey) {
-        restart();
-        game = setInterval(runGame, 30);
+        if (!playing) {
+          restart();
+          game = setInterval(runGame, 30);
+        }
       }
     }
 
