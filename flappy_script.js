@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d");
 const gameHeight = canvas.height - 70;
 let game;
 let playing = true;
+let animation = true;
 let sizeX = 35;
 let sizeY = 35;
 let gravity = 5;
@@ -58,7 +59,6 @@ function everyFrames(n) {
 
 function drawPipes() {
   pipes.forEach(pipe => {
-    ctx.fillStyle = 'blue';
     if (pipe.up) {
       ctx.drawImage(pipe_up, pipe.x, pipe.y, pipeWidth, pipe.height);
     }
@@ -110,8 +110,8 @@ function checkHitForAllPipes() {
 
 function handleBirdUpdate(e) {
   const upKey = 38;
-  if (e.keyCode === upKey) {
-    movement = 20;
+  if (e.keyCode === upKey && playing) {
+      movement = 20;
   }
 }
 
@@ -149,6 +149,7 @@ function restart() {
   gap;
   score = 0;
   playing = true;
+  animation = true;
 }
 
 function drawRestartText() {
@@ -160,32 +161,73 @@ function drawRestartText() {
 function handlePossibleRestart(e) {
   const kKey = 82;
   if(e.keyCode == kKey) {
-    if (!playing) {
+    if (!animation) {
       restart();
       game = setInterval(runGame, 30);
     }
   }
 }
 
+function logicWhenBirdLives() {
+  clear();
+  drawBackground();
+  createPipes();
+  updatePipes();
+  drawPipes();
+  updateBird();
+  drawBird();
+  birdThroughPipe();
+  drawScore();
+  drawHighscore();
+  nFrames += 1;
+}
+
+function logicWhenBirdHits() {
+  clear();
+  drawBackground();
+  drawPipes();
+  updateBird();
+  drawBird();
+  drawScore();
+  drawHighscore();
+}
+
+// function runGame() {
+//   if (checkHitBorders() || checkHitForAllPipes()) {
+//     playing = false;
+//   }
+//   if (playing) {
+//     clear();
+//     drawBackground();
+//     createPipes();
+//     updatePipes();
+//     drawPipes();
+//     updateBird();
+//     drawBird();
+//     birdThroughPipe();
+//     drawScore();
+//     drawHighscore();
+//     nFrames += 1;
+//   } else {
+//     drawRestartText();
+//     clearInterval(game);
+//   }
+
+// }
+
 function runGame() {
   if (checkHitBorders() || checkHitForAllPipes()) {
     playing = false;
   }
   if (playing) {
-    clear();
-    drawBackground();
-    createPipes();
-    updatePipes();
-    drawPipes();
-    updateBird();
-    drawBird();
-    birdThroughPipe();
-    drawScore();
-    drawHighscore();
-    nFrames += 1;
+    logicWhenBirdLives();
   } else {
-    drawRestartText();
-    clearInterval(game);
+    logicWhenBirdHits();
+    if (checkHitBorders()) {
+      drawRestartText();
+      clearInterval(game);
+      animation = false;
+    }
   }
 
 }
