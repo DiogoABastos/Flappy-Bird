@@ -384,8 +384,6 @@ function loop() {
   update();
   draw();
   frames++;
-
-  requestAnimationFrame(loop);
 }
 
-loop();
+setInterval(loop, 12);
