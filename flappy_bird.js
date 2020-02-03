@@ -39,12 +39,9 @@ function changeGameState(e) {
       bird.fly();
       break;
     case gameState.gameOver:
-      // only if user clicks on start button will the game start
-      if (e.offsetX > startButton.x && e.offsetX < startButton.x + startButton.w && e.offsetY > startButton.y && e.offsetY < startButton.y + startButton.h) {
         pipes.reset();
         score.reset();
         gameState.current = gameState.getReady;
-      }
       break;
   }
 }
