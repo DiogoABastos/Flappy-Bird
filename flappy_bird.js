@@ -30,6 +30,17 @@ const gameState = {
   gameOver: 2
 }
 
+// get the real mouse position
+function mousePos(canvas, e) {
+  let rect = canvas.getBoundingClientRect();
+  let scaleX = canvas.width / rect.width;
+  let scaleY = canvas.height / rect.height;
+  return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
+      }
+}
+
 function changeGameState(e) {
   switch (gameState.current) {
     case gameState.getReady:
@@ -39,9 +50,14 @@ function changeGameState(e) {
       bird.fly();
       break;
     case gameState.gameOver:
+
+      // if the click is inside the start Button, restart the game
+      let position = mousePos(canvas, e);
+      if (position.x > startButton.x && position.x < startButton.x + startButton.w && position.y > startButton.y && position.y < startButton.y + startButton.h) {
         pipes.reset();
         score.reset();
         gameState.current = gameState.getReady;
+      }
       break;
   }
 }
@@ -51,7 +67,7 @@ const startButton = {
   x: 120,
   y: 275,
   w: 80,
-  h: 30
+  h: 25
 }
 
 // add click event listener to switch the gamestate and play the game
