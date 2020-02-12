@@ -71,7 +71,7 @@ const startButton = {
 }
 
 // add click event listener to switch the gamestate and play the game
-canvas.addEventListener('click', changeGameState);
+canvas.addEventListener('mousedown', changeGameState);
 
 // draw background
 const background = {
