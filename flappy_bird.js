@@ -41,24 +41,57 @@ function mousePos(canvas, e) {
       }
 }
 
-function changeGameState(e) {
-  switch (gameState.current) {
-    case gameState.getReady:
-      gameState.current = gameState.playing;
-      break;
-    case gameState.playing:
-      bird.fly();
-      break;
-    case gameState.gameOver:
-
-      // if the click is inside the start Button, restart the game
-      let position = mousePos(canvas, e);
-      if (position.x > startButton.x && position.x < startButton.x + startButton.w && position.y > startButton.y && position.y < startButton.y + startButton.h) {
-        pipes.reset();
-        score.reset();
-        gameState.current = gameState.getReady;
+// get the real touch position
+function touchPos(canvas, e) {
+  let rect = canvas.getBoundingClientRect();
+  let scaleX = canvas.width / rect.width;
+  let scaleY = canvas.height / rect.height;
+  return {
+        x: (e.touches[0].clientX - rect.left) * scaleX,
+        y: (e.touches[0].clientY - rect.top) * scaleY
       }
-      break;
+}
+
+function changeGameState(e) {
+  e.preventDefault();
+  if (e.type === 'touchstart') {
+    switch (gameState.current) {
+      case gameState.getReady:
+        gameState.current = gameState.playing;
+        break;
+      case gameState.playing:
+        bird.fly();
+        break;
+      case gameState.gameOver:
+
+        // if the click is inside the start Button, restart the game
+        let position = touchPos(canvas, e);
+        if (position.x > startButton.x && position.x < startButton.x + startButton.w && position.y > startButton.y && position.y < startButton.y + startButton.h) {
+          pipes.reset();
+          score.reset();
+          gameState.current = gameState.getReady;
+        }
+        break;
+    }
+  } else if (e.type === 'click') {
+      switch (gameState.current) {
+      case gameState.getReady:
+        gameState.current = gameState.playing;
+        break;
+      case gameState.playing:
+        bird.fly();
+        break;
+      case gameState.gameOver:
+
+        // if the click is inside the start Button, restart the game
+        let position = mousePos(canvas, e);
+        if (position.x > startButton.x && position.x < startButton.x + startButton.w && position.y > startButton.y && position.y < startButton.y + startButton.h) {
+          pipes.reset();
+          score.reset();
+          gameState.current = gameState.getReady;
+        }
+        break;
+    }
   }
 }
 
@@ -70,8 +103,9 @@ const startButton = {
   h: 25
 }
 
-// add click event listener to switch the gamestate and play the game
+// add click and touchstart event listener to switch the gamestate and play the game
 canvas.addEventListener('click', changeGameState);
+canvas.addEventListener('touchstart', changeGameState);
 
 // draw background
 const background = {
